@@ -19,7 +19,7 @@ app.post('/cite', async (req, res) => {
 
     let inputSelector = '#autociteUrl'
 
-    const isDoi = doiRegex().test(source)
+    let isDoi = doiRegex().test(source)
 
     let result = {}
 
@@ -44,7 +44,7 @@ app.post('/cite', async (req, res) => {
 
     try {
 
-        browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+        browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: false })
 
         const page = await browser.newPage()
 
@@ -60,6 +60,8 @@ app.post('/cite', async (req, res) => {
 
         const citeButton = await page.waitForSelector('.button.cite-btn.btn-blue')
         await citeButton.click()
+
+        isDoi = false // temp solution
 
         if(!isDoi) {
 

@@ -233,7 +233,7 @@ export default {
 
           let res
 
-          res = await fetch('https://citethis.herokuapp.com/cite', {
+          res = await fetch('http://localhost:5000/cite', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...this.form, source}),
