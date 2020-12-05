@@ -87,12 +87,15 @@
 
           <b-list-group flush>
             <b-list-group-item class="text-left" v-for="(result, i) in results" :key="i">
-              <p>
-                <b-icon @click="$clipboard(result.inText)" icon="clipboard" variant="success" class="mr-2" style="cursor: pointer;"></b-icon><strong>In-text:</strong> {{result.inText}}
-              </p>
-              <p>
-                <b-icon @click="$clipboard(result.reference)" icon="clipboard" variant="success" class="mr-2" style="cursor: pointer;"></b-icon><strong>Reference:</strong> {{result.reference}}
-              </p>
+              <p v-if="result.error" variant="danger">{{ result.error }}</p>
+              <div v-else>
+                <p>
+                  <b-icon @click="$clipboard(result.inText)" icon="clipboard" variant="success" class="mr-2" style="cursor: pointer;"></b-icon><strong>In-text:</strong> {{result.inText}}
+                </p>
+                <p>
+                  <b-icon @click="$clipboard(result.reference)" icon="clipboard" variant="success" class="mr-2" style="cursor: pointer;"></b-icon><strong>Reference:</strong> {{result.reference}}
+                </p>
+              </div>
             </b-list-group-item>
           </b-list-group>
 
@@ -146,14 +149,13 @@ export default {
     method: 'file',
     isFileUpload: true,
     results: [],
-    errors: [],
     loading: false,
     progress: 0,
   }),
 
   computed: {
     compiledReference() {
-      return this.results.map(result => result.reference).sort().join('\n\n')
+      return this.results.filter(result => !result.error).map(result => result.reference).sort().join('\n\n')
     }
   },
 
@@ -233,7 +235,7 @@ export default {
 
           let res
 
-          res = await fetch('http://localhost:5000/cite', {
+          res = await fetch('https://citethis.herokuapp.com/cite', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...this.form, source}),
@@ -247,6 +249,7 @@ export default {
 
         } catch(e) {
           console.error(e)
+          this.result.push({ error: `Could not cite "${source}"` })
         }
 
       }
