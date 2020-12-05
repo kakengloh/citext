@@ -44,7 +44,7 @@ app.post('/cite', async (req, res) => {
 
     try {
 
-        browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: false })
+        browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 
         const page = await browser.newPage()
 
